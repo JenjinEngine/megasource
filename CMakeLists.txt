@@ -3,15 +3,13 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 	message(FATAL_ERROR "Prevented in-tree build.")
 endif()
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.5)
 
 include(ExternalProject)
 
 project(megasource)
 
 set(MEGA TRUE)
-
-option(LOVE_USE_SDL3 "Use SDL3 instead of SDL2" OFF)
 
 set (CMAKE_CXX_STANDARD 11)
 
@@ -216,93 +214,17 @@ if(MSVC)
 endif()
 
 
-set(MEGA_ZLIB_VER "1.2.12")
 set(MEGA_LUA51_VER "5.1.5")
 set(MEGA_LUAJIT_VER "2.1.1710088188")
-set(MEGA_LIBOGG_VER "1.3.2")
-set(MEGA_LIBVORBIS_VER "1.3.5")
-set(MEGA_LIBTHEORA_VER "1.1.1")
-set(MEGA_FREETYPE_VER "2.13.2")
-set(MEGA_SDL2_VER "2.28.5")
-set(MEGA_SDL3_VER "3.1.1-preview")
 set(MEGA_OPENAL_VER "1.23.1-bc7cb17")
-set(MEGA_MODPLUG_VER "0.8.8.4")
 
 set(SKIP_INSTALL_ALL TRUE)
-
-set(ZLIB_FOUND TRUE)
-set(ZLIB_LIBRARY zlibstatic)
-set(ZLIB_INCLUDE_DIR .)
-
-set(OGG_LIBRARY ogg-static)
-
-message(STATUS "-----------------------------------------------------")
-message(STATUS "Configuring: zlib ${MEGA_ZLIB_VER}")
-message(STATUS "-----------------------------------------------------")
-add_subdirectory("libs/zlib-${MEGA_ZLIB_VER}" ${CMAKE_BINARY_DIR}/zlib)
-set(MEGA_ZLIB zlibstatic)
 
 message(STATUS "-----------------------------------------------------")
 message(STATUS "Configuring: lua ${MEGA_LUA51_VER}")
 message(STATUS "-----------------------------------------------------")
 add_subdirectory("libs/lua-${MEGA_LUA51_VER}" ${CMAKE_BINARY_DIR}/lua51)
 set(MEGA_LUA51 lua51)
-
-message(STATUS "-----------------------------------------------------")
-message(STATUS "Configuring: libogg ${MEGA_LIBOGG_VER}")
-message(STATUS "-----------------------------------------------------")
-add_subdirectory("libs/libogg-${MEGA_LIBOGG_VER}" ${CMAKE_BINARY_DIR}/libogg)
-set(MEGA_LIBOGG ogg-static)
-
-message(STATUS "-----------------------------------------------------")
-message(STATUS "Configuring: libvorbis ${MEGA_LIBVORBIS_VER}")
-message(STATUS "-----------------------------------------------------")
-add_subdirectory("libs/libvorbis-${MEGA_LIBVORBIS_VER}" ${CMAKE_BINARY_DIR}/libvorbis)
-set(MEGA_LIBVORBIS vorbis-static)
-set(MEGA_LIBVORBISFILE vorbisfile-static)
-
-message(STATUS "-----------------------------------------------------")
-message(STATUS "Configuring: libtheora ${MEGA_LIBTHEORA_VER}")
-message(STATUS "-----------------------------------------------------")
-add_subdirectory("libs/libtheora-${MEGA_LIBTHEORA_VER}" ${CMAKE_BINARY_DIR}/libtheora)
-set(MEGA_LIBTHEORA theora-static)
-
-message(STATUS "-----------------------------------------------------")
-message(STATUS "Configuring: freetype ${MEGA_FREETYPE_VER}")
-message(STATUS "-----------------------------------------------------")
-set(FT_DISABLE_ZLIB ON CACHE BOOL "(FreeType) Use zlib from megasource" FORCE)
-add_subdirectory("libs/freetype" ${CMAKE_BINARY_DIR}/freetype)
-set(MEGA_FREETYPE freetype)
-
-message(STATUS "-----------------------------------------------------")
-message(STATUS "Configuring: harfbuzz")
-message(STATUS "-----------------------------------------------------")
-add_subdirectory("libs/harfbuzz" ${CMAKE_BINARY_DIR}/harfbuzz)
-set(MEGA_HARFBUZZ harfbuzz)
-
-if(WIN32 AND MEGA_ARM64)
-	# In Windows, SDL always tries to open OpenGL32.dll, which is not available in Windows ARM64.
-	# This will cause error later on which makes love.window.setMode unhappy even when
-	# LOVE_GRAPHICS_USE_OPENGLES is set, so disable OpenGL backend.
-	set(SDL_OPENGL OFF CACHE BOOL "(SDL) Enable OpenGL Backend" FORCE)
-endif()
-if (LOVE_USE_SDL3)
-	message(STATUS "-----------------------------------------------------")
-	message(STATUS "Configuring: SDL3 ${MEGA_SDL3_VER}")
-	message(STATUS "-----------------------------------------------------")
-	add_subdirectory("libs/SDL3" ${CMAKE_BINARY_DIR}/SDL3)
-	set(MEGA_SDL3 SDL3-shared)
-	set(MEGA_SDL2 )
-	set(MEGA_SDL2MAIN )
-else()
-	message(STATUS "-----------------------------------------------------")
-	message(STATUS "Configuring: SDL2 ${MEGA_SDL2_VER}")
-	message(STATUS "-----------------------------------------------------")
-	add_subdirectory("libs/SDL2" ${CMAKE_BINARY_DIR}/SDL2)
-	set(MEGA_SDL2 SDL2)
-	set(MEGA_SDL2MAIN SDL2main)
-	set(MEGA_SDL3 )
-endif()
 
 message(STATUS "-----------------------------------------------------")
 message(STATUS "Configuring: openal-soft ${MEGA_OPENAL_VER}")
@@ -322,12 +244,6 @@ if(ANDROID)
 endif()
 add_subdirectory("libs/openal-soft" ${CMAKE_BINARY_DIR}/openal-soft)
 set(MEGA_OPENAL ${OPENAL_LIB_NAME})
-
-message(STATUS "-----------------------------------------------------")
-message(STATUS "Configuring: libmodplug ${MEGA_MODPLUG_VER}")
-message(STATUS "-----------------------------------------------------")
-add_subdirectory("libs/libmodplug-${MEGA_MODPLUG_VER}" ${CMAKE_BINARY_DIR}/libmodplug)
-set(MEGA_MODPLUG modplug-static)
 
 # LuaJIT
 if(MSVC)
@@ -397,47 +313,33 @@ elseif(ANDROID)
 endif()
 
 set(MEGA_3P
-	${MEGA_ZLIB}
 	${MEGA_LUA51}
-	${MEGA_LIBOGG}
-	${MEGA_LIBVORBIS}
-	${MEGA_LIBVORBISFILE}
-	${MEGA_LIBTHEORA}
-	${MEGA_FREETYPE}
-	${MEGA_SDL3}
-	${MEGA_SDL2}
-	${MEGA_SDL2MAIN}
 	${MEGA_OPENAL}
 	${MEGA_MODPLUG}
 )
 
-# Set to directory of love source. Defaults to ./libs/love.
-if(NOT MEGA_LOVE)
-	set(MEGA_LOVE ${CMAKE_CURRENT_SOURCE_DIR}/libs/love)
-endif()
+# if(EXISTS ${MEGA_LOVE}/CMakeLists.txt)
+# 	message(STATUS "-----------------------------------------------------")
+# 	message(STATUS "Configuring: love")
+# 	message(STATUS "-----------------------------------------------------")
+# 	add_subdirectory(${MEGA_LOVE} ${CMAKE_BINARY_DIR}/love)
 
-if(EXISTS ${MEGA_LOVE}/CMakeLists.txt)
-	message(STATUS "-----------------------------------------------------")
-	message(STATUS "Configuring: love")
-	message(STATUS "-----------------------------------------------------")
-	add_subdirectory(${MEGA_LOVE} ${CMAKE_BINARY_DIR}/love)
+# 	# Turn off third-party warnings when building with LOVE.
+# 	foreach(MEGA_LIB ${MEGA_3P})
+# 		disable_warnings(${MEGA_LIB})
+# 	endforeach()
 
-	# Turn off third-party warnings when building with LOVE.
-	foreach(MEGA_LIB ${MEGA_3P})
-		disable_warnings(${MEGA_LIB})
-	endforeach()
+# 	if(MSVC)
+# 		set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT love)
+# 	endif()
+# else()
+# 	message(STATUS "LOVE was not found")
+# endif()
 
-	if(MSVC)
-		set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT love)
-	endif()
-else()
-	message(STATUS "LOVE was not found")
-endif()
-
-link_directories(${SDL_LINK_DIR})
+# link_directories(${SDL_LINK_DIR})
 add_executable(megatest src/test.cpp)
 target_link_libraries(megatest ${MEGA_3P})
 
-add_move_dll(megatest ${MEGA_SDL2} ${MEGA_SDL3})
+# add_move_dll(megatest ${MEGA_SDL2} ${MEGA_SDL3})
 add_move_dll(megatest ${MEGA_OPENAL})
 add_move_dll(megatest ${MEGA_LUA51})
