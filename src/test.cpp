@@ -6,7 +6,9 @@
 #include <AL/al.h>
 #include <AL/alext.h>
 
-#include "lua.hpp"
+extern "C" {
+#include "lua.h"
+}
 
 std::string pad(std::string s, size_t size = 16)
 {
