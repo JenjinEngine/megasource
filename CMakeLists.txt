@@ -13,7 +13,7 @@ set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 set(BUILD_SHARED_LIBS OFF)
 
 set (CMAKE_CXX_STANDARD 11)
-set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static -ldl")
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
 
 set(MEGA TRUE)
 
@@ -220,7 +220,6 @@ endif()
 
 set(MEGA_LUA51_VER "5.1.5")
 set(MEGA_LUAJIT_VER "2.1.1710088188")
-set(MEGA_OPENAL_VER "1.23.1-bc7cb17")
 
 set(SKIP_INSTALL_ALL TRUE)
 
@@ -229,25 +228,6 @@ message(STATUS "Configuring: lua ${MEGA_LUA51_VER}")
 message(STATUS "-----------------------------------------------------")
 add_subdirectory("libs/lua-${MEGA_LUA51_VER}" ${CMAKE_BINARY_DIR}/lua51)
 set(MEGA_LUA51 lua51)
-
-message(STATUS "-----------------------------------------------------")
-message(STATUS "Configuring: openal-soft ${MEGA_OPENAL_VER}")
-message(STATUS "-----------------------------------------------------")
-set(ALSOFT_UTILS OFF CACHE BOOL "Build utility programs" FORCE)
-set(ALSOFT_NO_CONFIG_UTIL ON CACHE BOOL "Disable building the alsoft-config utility" FORCE)
-set(ALSOFT_EXAMPLES OFF CACHE BOOL "Build example programs" FORCE)
-set(ALSOFT_INSTALL OFF CACHE BOOL "Install main library" FORCE)
-set(ALSOFT_INSTALL_CONFIG OFF CACHE BOOL "Install alsoft.conf sample configuration file" FORCE)
-set(ALSOFT_INSTALL_HRTF_DATA OFF CACHE BOOL "Install HRTF data files" FORCE)
-set(ALSOFT_INSTALL_AMBDEC_PRESETS OFF CACHE BOOL "Install AmbDec preset files" FORCE)
-set(ALSOFT_INSTALL_EXAMPLES OFF CACHE BOOL "Install example programs (alplay, alstream, ...)" FORCE)
-set(ALSOFT_INSTALL_UTILS OFF CACHE BOOL "Install utility programs (openal-info, alsoft-config, ...)" FORCE)
-if(ANDROID)
-	set(ALSOFT_REQUIRE_OBOE ON CACHE BOOL "Require Oboe backend" FORCE)
-	set(ALSOFT_REQUIRE_OPENSL ON CACHE BOOL "Require OpenSL backend" FORCE)
-endif()
-add_subdirectory("libs/openal-soft" ${CMAKE_BINARY_DIR}/openal-soft)
-set(MEGA_OPENAL ${OPENAL_LIB_NAME})
 
 # LuaJIT
 if(MSVC)
@@ -319,7 +299,6 @@ endif()
 
 set(MEGA_3P
 	${MEGA_LUA51}
-	${MEGA_OPENAL}
 	${MEGA_MODPLUG}
 )
 
@@ -345,5 +324,4 @@ add_executable(megatest src/test.cpp)
 target_link_libraries(megatest ${MEGA_3P})
 
 # add_move_dll(megatest ${MEGA_SDL2} ${MEGA_SDL3})
-# add_move_dll(megatest ${MEGA_OPENAL})
 # add_move_dll(megatest ${MEGA_LUA51})

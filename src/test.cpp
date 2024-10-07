@@ -3,9 +3,6 @@
 #include <sstream>
 #include <vector>
 
-#include <AL/al.h>
-#include <AL/alext.h>
-
 extern "C" {
 #include "lua.h"
 }
@@ -28,16 +25,8 @@ int main(int argc, char **argv) {
 		return "Lua";
 	};
 
-	auto OpenAL = [](std::stringstream &compOut) {
-		alIsEnabled(AL_SOURCE_DISTANCE_MODEL);
-
-		compOut << "N/A";
-		return "OpenAL";
-	};
-
 	std::vector<std::function<std::string(std::stringstream&)>> funcs;
 	funcs.push_back(lua);
-	funcs.push_back(OpenAL);
 
 	for (auto& f : funcs) {
 		std::stringstream c;
