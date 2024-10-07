@@ -26,6 +26,8 @@ jobs:
       run: cmake -Bbuild -Hmegasource -T v142 -A %PLATFORM% -DCMAKE_INSTALL_PREFIX=%CD%\install
     - name: Install
       run: cmake --build build --config Release -j2
+    - name: List
+      run: dir build\Release
     - uses: actions/upload-artifact@v4
       with:
         name: megatest (windows) (${{ matrix.platform }})

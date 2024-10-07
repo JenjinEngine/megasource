@@ -9,10 +9,10 @@ Building
 --------
 To build just the dependencies for 64 bit x86 using Visual Studio 2022:
 ```sh
-	$ git clone https://github.com/JenjinEngine/megasource megasource
-	$ cd megasource
-	$ cmake -G Ninja -A x64 -S . -B build
-	$ cmake --build build --config Release
+$ git clone https://github.com/JenjinEngine/megasource megasource
+$ cd megasource
+$ cmake -G Ninja -A x64 -S . -B build
+$ cmake --build build --config Release
 ```
 
 [Jenjin]: https://github.com/JenjinEngine
