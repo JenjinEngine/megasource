@@ -219,7 +219,7 @@ endif()
 
 
 set(MEGA_LUA51_VER "5.1.5")
-set(MEGA_LUAJIT_VER "2.1.1710088188")
+# set(MEGA_LUAJIT_VER "2.1.1710088188")
 
 set(SKIP_INSTALL_ALL TRUE)
 
@@ -229,73 +229,73 @@ message(STATUS "-----------------------------------------------------")
 add_subdirectory("libs/lua-${MEGA_LUA51_VER}" ${CMAKE_BINARY_DIR}/lua51)
 set(MEGA_LUA51 lua51)
 
-# LuaJIT
-if(MSVC)
-	message(STATUS "-----------------------------------------------------")
-	message(STATUS "Configuring: LuaJIT ${MEGA_LUAJIT_VER}")
-	message(STATUS "-----------------------------------------------------")
-	set(MEGA_LUAJIT_DIR "LuaJIT")
+# # LuaJIT
+# if(MSVC)
+# 	message(STATUS "-----------------------------------------------------")
+# 	message(STATUS "Configuring: LuaJIT ${MEGA_LUAJIT_VER}")
+# 	message(STATUS "-----------------------------------------------------")
+# 	set(MEGA_LUAJIT_DIR "LuaJIT")
 
-	# Copy LuaJIT source to binary dir. LuaJIT builds in-source,
-	# and we don't want to modify the original source tree, so
-	# we copy it.
-	file(COPY libs/${MEGA_LUAJIT_DIR} DESTINATION ${CMAKE_BINARY_DIR}/libs)
+# 	# Copy LuaJIT source to binary dir. LuaJIT builds in-source,
+# 	# and we don't want to modify the original source tree, so
+# 	# we copy it.
+# 	file(COPY libs/${MEGA_LUAJIT_DIR} DESTINATION ${CMAKE_BINARY_DIR}/libs)
 
-	set(MEGA_LUAJIT_SOURCE_DIR ${CMAKE_BINARY_DIR}/libs/${MEGA_LUAJIT_DIR})
+# 	set(MEGA_LUAJIT_SOURCE_DIR ${CMAKE_BINARY_DIR}/libs/${MEGA_LUAJIT_DIR})
 
-	set(MEGA_LUAJIT_BUILD_BAT "
-		if not defined DevEnvDir (
-			call \"${MEGA_MSVC_VCVARSALL_BAT}\" ${MEGA_MSVC_VCVARSALL_BAT_ARG}
-		)
-		cd \"${MEGA_LUAJIT_SOURCE_DIR}/src\"
-		cl
-		msvcbuild.bat debug amalg
-	")
+# 	set(MEGA_LUAJIT_BUILD_BAT "
+# 		if not defined DevEnvDir (
+# 			call \"${MEGA_MSVC_VCVARSALL_BAT}\" ${MEGA_MSVC_VCVARSALL_BAT_ARG}
+# 		)
+# 		cd \"${MEGA_LUAJIT_SOURCE_DIR}/src\"
+# 		cl
+# 		msvcbuild.bat debug amalg
+# 	")
 
-	file(WRITE ${MEGA_LUAJIT_SOURCE_DIR}/megabuild.bat ${MEGA_LUAJIT_BUILD_BAT})
+# 	file(WRITE ${MEGA_LUAJIT_SOURCE_DIR}/megabuild.bat ${MEGA_LUAJIT_BUILD_BAT})
 
-	ExternalProject_Add(luajit
-		SOURCE_DIR ${MEGA_LUAJIT_SOURCE_DIR}
-		BUILD_IN_SOURCE 1
-		CONFIGURE_COMMAND ""
-		BUILD_COMMAND "${MEGA_LUAJIT_SOURCE_DIR}/megabuild.bat"
-		INSTALL_COMMAND cmake -E make_directory ${CMAKE_BINARY_DIR}/bin
-			COMMAND cmake -E copy ${MEGA_LUAJIT_SOURCE_DIR}/src/lua51.dll ${CMAKE_BINARY_DIR}/bin
-			COMMAND cmake -E copy ${MEGA_LUAJIT_SOURCE_DIR}/src/lua51.lib ${CMAKE_BINARY_DIR}/bin
-		BUILD_BYPRODUCTS "${CMAKE_BINARY_DIR}/bin/lua51.lib" "${CMAKE_BINARY_DIR}/bin/lua51.dll"
-	)
-	set_target_properties(luajit PROPERTIES
-		INTERFACE_INCLUDE_DIRECTORIES "${MEGA_LUAJIT_SOURCE_DIR}/src"
-		IMPORTED_IMPLIB "${CMAKE_BINARY_DIR}/bin/lua51.lib"
-		IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/bin/lua51.dll"
-	)
-	set(MEGA_LUAJIT_LIB ${CMAKE_BINARY_DIR}/bin/lua51.lib)
-	set(MEGA_LUAJIT_DLL ${CMAKE_BINARY_DIR}/bin/lua51.dll)
-	set(MEGA_LUAJIT_INCLUDE ${MEGA_LUAJIT_SOURCE_DIR}/src)
-elseif(ANDROID)
-	# LuaJIT is prebuilt in Android
-	message(STATUS "-----------------------------------------------------")
-	message(STATUS "Configuring: LuaJIT ${MEGA_LUAJIT_VER}")
-	message(STATUS "-----------------------------------------------------")
-	set(MEGA_LUAJIT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs/LuaJIT")
+# 	ExternalProject_Add(luajit
+# 		SOURCE_DIR ${MEGA_LUAJIT_SOURCE_DIR}
+# 		BUILD_IN_SOURCE 1
+# 		CONFIGURE_COMMAND ""
+# 		BUILD_COMMAND "${MEGA_LUAJIT_SOURCE_DIR}/megabuild.bat"
+# 		INSTALL_COMMAND cmake -E make_directory ${CMAKE_BINARY_DIR}/bin
+# 			COMMAND cmake -E copy ${MEGA_LUAJIT_SOURCE_DIR}/src/lua51.dll ${CMAKE_BINARY_DIR}/bin
+# 			COMMAND cmake -E copy ${MEGA_LUAJIT_SOURCE_DIR}/src/lua51.lib ${CMAKE_BINARY_DIR}/bin
+# 		BUILD_BYPRODUCTS "${CMAKE_BINARY_DIR}/bin/lua51.lib" "${CMAKE_BINARY_DIR}/bin/lua51.dll"
+# 	)
+# 	set_target_properties(luajit PROPERTIES
+# 		INTERFACE_INCLUDE_DIRECTORIES "${MEGA_LUAJIT_SOURCE_DIR}/src"
+# 		IMPORTED_IMPLIB "${CMAKE_BINARY_DIR}/bin/lua51.lib"
+# 		IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/bin/lua51.dll"
+# 	)
+# 	set(MEGA_LUAJIT_LIB ${CMAKE_BINARY_DIR}/bin/lua51.lib)
+# 	set(MEGA_LUAJIT_DLL ${CMAKE_BINARY_DIR}/bin/lua51.dll)
+# 	set(MEGA_LUAJIT_INCLUDE ${MEGA_LUAJIT_SOURCE_DIR}/src)
+# elseif(ANDROID)
+# 	# LuaJIT is prebuilt in Android
+# 	message(STATUS "-----------------------------------------------------")
+# 	message(STATUS "Configuring: LuaJIT ${MEGA_LUAJIT_VER}")
+# 	message(STATUS "-----------------------------------------------------")
+# 	set(MEGA_LUAJIT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs/LuaJIT")
 
-	# add_library(luajit IMPORTED SHARED GLOBAL)
-	add_library(luajit STATIC IMPORTED GLOBAL)
-	set_target_properties(luajit PROPERTIES
-		IMPORTED_LOCATION ${MEGA_LUAJIT_DIR}/android/${ANDROID_ABI}/libluajit.so
-	)
-	target_include_directories(luajit INTERFACE ${MEGA_LUAJIT_DIR}/src ${MEGA_LUAJIT_DIR}/android/${ANDROID_ABI})
-	set(MEGA_LUAJIT_LIB ${MEGA_LUAJIT_DIR}/android/${ANDROID_ABI}/libluajit.so)
-	set(MEGA_LUAJIT_DLL)
-	set(MEGA_LUAJIT_INCLUDE ${MEGA_LUAJIT_DIR}/src ${MEGA_LUAJIT_DIR}/android/${ANDROID_ABI})
-	set(LUA_FOUND ON)
-	set(LUA_INCLUDE_DIR ${MEGA_LUAJIT_INCLUDE})
-	set(LUA_LIBRARY luajit)
-	set(LUA_VERSION_MAJOR 5)
-	set(LUA_VERSION_MINOR 1)
-	set(LUA_VERSION_PATCH 5)
-	set(LUA_VERSION_STRING "LuaJIT ${MEGA_LUAJIT_VER}")
-endif()
+# 	# add_library(luajit IMPORTED SHARED GLOBAL)
+# 	add_library(luajit STATIC IMPORTED GLOBAL)
+# 	set_target_properties(luajit PROPERTIES
+# 		IMPORTED_LOCATION ${MEGA_LUAJIT_DIR}/android/${ANDROID_ABI}/libluajit.so
+# 	)
+# 	target_include_directories(luajit INTERFACE ${MEGA_LUAJIT_DIR}/src ${MEGA_LUAJIT_DIR}/android/${ANDROID_ABI})
+# 	set(MEGA_LUAJIT_LIB ${MEGA_LUAJIT_DIR}/android/${ANDROID_ABI}/libluajit.so)
+# 	set(MEGA_LUAJIT_DLL)
+# 	set(MEGA_LUAJIT_INCLUDE ${MEGA_LUAJIT_DIR}/src ${MEGA_LUAJIT_DIR}/android/${ANDROID_ABI})
+# 	set(LUA_FOUND ON)
+# 	set(LUA_INCLUDE_DIR ${MEGA_LUAJIT_INCLUDE})
+# 	set(LUA_LIBRARY luajit)
+# 	set(LUA_VERSION_MAJOR 5)
+# 	set(LUA_VERSION_MINOR 1)
+# 	set(LUA_VERSION_PATCH 5)
+# 	set(LUA_VERSION_STRING "LuaJIT ${MEGA_LUAJIT_VER}")
+# endif()
 
 set(MEGA_3P
 	${MEGA_LUA51}
@@ -323,5 +323,6 @@ set(MEGA_3P
 add_executable(megatest src/test.cpp)
 target_link_libraries(megatest ${MEGA_3P})
 
+# add_move_dll(megatest ${MEGA_SDL2} ${MEGA_SDL3})
 # add_move_dll(megatest ${MEGA_SDL2} ${MEGA_SDL3})
 # add_move_dll(megatest ${MEGA_LUA51})
