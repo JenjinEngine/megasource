@@ -9,9 +9,13 @@ include(ExternalProject)
 
 project(megasource)
 
-set(MEGA TRUE)
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+set(BUILD_SHARED_LIBS OFF)
 
 set (CMAKE_CXX_STANDARD 11)
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static -ldl")
+
+set(MEGA TRUE)
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 	if(MSVC)
@@ -295,7 +299,8 @@ elseif(ANDROID)
 	message(STATUS "-----------------------------------------------------")
 	set(MEGA_LUAJIT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs/LuaJIT")
 
-	add_library(luajit IMPORTED SHARED GLOBAL)
+	# add_library(luajit IMPORTED SHARED GLOBAL)
+	add_library(luajit STATIC IMPORTED GLOBAL)
 	set_target_properties(luajit PROPERTIES
 		IMPORTED_LOCATION ${MEGA_LUAJIT_DIR}/android/${ANDROID_ABI}/libluajit.so
 	)
@@ -336,10 +341,9 @@ set(MEGA_3P
 # 	message(STATUS "LOVE was not found")
 # endif()
 
-# link_directories(${SDL_LINK_DIR})
 add_executable(megatest src/test.cpp)
 target_link_libraries(megatest ${MEGA_3P})
 
 # add_move_dll(megatest ${MEGA_SDL2} ${MEGA_SDL3})
-add_move_dll(megatest ${MEGA_OPENAL})
-add_move_dll(megatest ${MEGA_LUA51})
+# add_move_dll(megatest ${MEGA_OPENAL})
+# add_move_dll(megatest ${MEGA_LUA51})
