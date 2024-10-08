@@ -49,5 +49,5 @@ include_directories(imgui)
 add_library(imgui STATIC ${IMGUI_SOURCES} ${IMGUI_HEADERS})
 
 # --- Lua ---
-add_subdirectory(lua-5.1.5)
+add_subdirectory(lua)
 

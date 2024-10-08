@@ -25,9 +25,9 @@ target_include_directories(${PROJECT_NAME}
 				${CMAKE_SOURCE_DIR}/libs/imgui/
 				${CMAKE_SOURCE_DIR}/libs/imgui/backends/
 				${CMAKE_SOURCE_DIR}/libs/stb/
-				${CMAKE_SOURCE_DIR}/libs/lua-5.1.5/
+				${CMAKE_SOURCE_DIR}/libs/lua/include/
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw glad spdlog glm stb imgui lua51)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw glad spdlog glm stb imgui lua54)
