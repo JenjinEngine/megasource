@@ -17,3 +17,6 @@
 [submodule "libs/lua"]
 	path = libs/lua
 	url = https://github.com/JenjinEngine/lua
+[submodule "libs/sol2"]
+	path = libs/sol2
+	url = https://github.com/ThePhD/sol2.git

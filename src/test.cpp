@@ -1,5 +1,6 @@
 #include <functional>
 #include <iostream>
+#include <sol/state.hpp>
 #include <sstream>
 #include <vector>
 #include <string>
@@ -8,8 +9,9 @@
 #include <glad/glad.h> // GLAD
 #include <GLFW/glfw3.h> // GLFW
 #include <glm/glm.hpp> // GLM
-#include <imgui.h> // ImGui
+#include <imgui/imgui.h> // ImGui
 #include <spdlog/spdlog.h> // Spdlog
+#include <sol/sol.hpp> // Sol3
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h> // stb_image
@@ -53,6 +55,19 @@ int main(int argc, char *argv[]) {
 
 		compOut << " + JIT: " << (jit ? "Yes" : "No");
 		return jit ? "LuaJIT" : "Lua";
+	};
+
+	auto sol = [](std::stringstream &compOut) {
+		sol::state lua;
+		lua.safe_script("a = 3 + 4");
+		if (lua["a"] != 7) {
+			std::cerr << "Failed to execute Lua code!" << std::endl;
+			return "Sol3";
+		}
+
+		compOut << fmt::format("{}.{}.{}", SOL_VERSION_MAJOR, SOL_VERSION_MINOR, SOL_VERSION_PATCH);
+
+		return "Sol3";
 	};
 
 	auto glm = [](std::stringstream &compOut) {
@@ -106,6 +121,7 @@ int main(int argc, char *argv[]) {
 
 	std::vector<std::function<std::string(std::stringstream&)>> funcs = {
 		lua,
+		sol,
 		glm,
 		spdlog,
 		stb,
@@ -120,6 +136,6 @@ int main(int argc, char *argv[]) {
 		std::cout << "-- " << pad(name) << "   compiled: " << pad(c.str(), 7) << std::endl;
 	}
 
-	std::cout << "Press RETURN to exit..." << std::endl;
+	std::cout << "\nPress RETURN to exit...";
 	getchar(); return 0;
 }

@@ -26,8 +26,11 @@ target_include_directories(${PROJECT_NAME}
 				${CMAKE_SOURCE_DIR}/libs/imgui/backends/
 				${CMAKE_SOURCE_DIR}/libs/stb/
 				${CMAKE_SOURCE_DIR}/libs/lua/include/
+				${CMAKE_SOURCE_DIR}/libs/
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw glad spdlog glm stb imgui lua54)
+# static build gcc and everything
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw glad spdlog glm stb imgui lua54 sol2)

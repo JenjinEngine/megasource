@@ -51,3 +51,5 @@ add_library(imgui STATIC ${IMGUI_SOURCES} ${IMGUI_HEADERS})
 # --- Lua ---
 add_subdirectory(lua)
 
+# --- Sol2 ---
+add_subdirectory(sol2)
