@@ -39,6 +39,8 @@ add_library(lua51 STATIC ${LUA_SRC})
 
 if (UNIX)
 	add_definitions(-DLUA_USE_MKSTEMP)
+else()
+	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
 target_include_directories(lua51 PUBLIC src)
