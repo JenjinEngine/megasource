@@ -12,26 +12,27 @@ jobs:
       run:
         shell: cmd
     steps:
-    - name: Checkout megasource
-      uses: actions/checkout@v4
-      with:
-        path: megasource
-    - name: Remove Strawberry Perl From Path
-      run: |
-        move /y C:\Strawberry C:\Strawberry_not_in_PATH
-        exit /b 0
-    - name: Configure
-      env:
-        PLATFORM: ${{ matrix.platform }}
-      run: cmake -Bbuild -Hmegasource -T v142 -A %PLATFORM% -DCMAKE_INSTALL_PREFIX=%CD%\install
-    - name: Install
-      run: cmake --build build --config Release -j2
-    - name: List
-      run: dir build\Release
-    - uses: actions/upload-artifact@v4
-      with:
-        name: megatest (windows) (${{ matrix.platform }})
-        path: build/Release/megatest.exe
+      - name: Checkout megasource
+        uses: actions/checkout@v4
+        with:
+          path: megasource
+          submodules: 'recursive'
+      - name: Remove Strawberry Perl From Path
+        run: |
+          move /y C:\Strawberry C:\Strawberry_not_in_PATH
+          exit /b 0
+      - name: Configure
+        env:
+          PLATFORM: ${{ matrix.platform }}
+        run: cmake -Bbuild -Hmegasource -T v142 -A %PLATFORM% -DCMAKE_INSTALL_PREFIX=%CD%\install
+      - name: Install
+        run: cmake --build build --config Release -j2
+      - name: List
+        run: dir build\Release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: megatest (windows) (${{ matrix.platform }})
+          path: build/Release/megatest.exe
 
   linux:
     runs-on: ubuntu-latest
@@ -40,21 +41,21 @@ jobs:
       matrix:
         platform: [x64]
     steps:
-    - name: Checkout megasource
-      uses: actions/checkout@v4
-      with:
-        path: megasource
-    - name: Install Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential cmake
-    - name: Configure
-      env:
-        PLATFORM: ${{ matrix.platform }}
-      run: cmake -Bbuild -Hmegasource -DCMAKE_INSTALL_PREFIX=$PWD/install
-    - name: Build
-      run: cmake --build build --config Release -j2
-    - uses: actions/upload-artifact@v4
-      with:
-        name: megatest (linux)
-        path: build/megatest
+      - name: Checkout megasource
+        uses: actions/checkout@v4
+        with:
+          path: megasource
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake
+      - name: Configure
+        env:
+          PLATFORM: ${{ matrix.platform }}
+        run: cmake -Bbuild -Hmegasource -DCMAKE_INSTALL_PREFIX=$PWD/install
+      - name: Build
+        run: cmake --build build --config Release -j2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: megatest (linux)
+          path: build/megatest
