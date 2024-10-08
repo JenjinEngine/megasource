@@ -1,9 +1,6 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 
 project(lua51)
-
-option(LUA_BUILD_SHARED "Build shared library" OFF)
-option(LUA_BUILD_STATIC "Build static library" ON)
 
 set(LUA_SRC
 	src/lapi.c
@@ -38,17 +35,17 @@ set(LUA_SRC
 	src/print.c
 )
 
-if (LUA_BUILD_STATIC)
-	# add_library(lua51-static STATIC ${LUA_SRC})
-	add_library(lua51 STATIC ${LUA_SRC})
-	target_include_directories(lua51 PUBLIC src)
-endif()
+add_library(lua51 STATIC ${LUA_SRC})
 
-if (LUA_BUILD_SHARED)
-	add_library(lua51 SHARED ${LUA_SRC})
-	target_include_directories(lua51 PUBLIC src)
-	if(MSVC)
-		set_property(TARGET lua51 PROPERTY COMPILE_DEFINITIONS LUA_BUILD_AS_DLL=1)
-	endif()
-	install(TARGETS lua51 RUNTIME DESTINATION . LIBRARY DESTINATION .)
-endif()
+# LUA_USE_MKSTEMP?
+add_definitions(-DLUA_USE_MKSTEMP)
+target_include_directories(lua51 PUBLIC src)
+
+# if (LUA_BUILD_SHARED)
+# 	add_library(lua51 SHARED ${LUA_SRC})
+# 	target_include_directories(lua51 PUBLIC src)
+# 	if(MSVC)
+# 		set_property(TARGET lua51 PROPERTY COMPILE_DEFINITIONS LUA_BUILD_AS_DLL=1)
+# 	endif()
+# 	install(TARGETS lua51 RUNTIME DESTINATION . LIBRARY DESTINATION .)
+# endif()

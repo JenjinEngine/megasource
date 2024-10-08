@@ -1,4 +1,4 @@
-Megasource is a CMake-buildable collection of all [Jenjin's](Jenjin) dependencies from [LÖVE](https://love2d.org).
+Megasource is a CMake-buildable collection of all [Jenjin's](https://github.com/JenjinEngine/Jenjin) dependencies from [LÖVE](https://love2d.org).
 
 Prerequisites
 -------------

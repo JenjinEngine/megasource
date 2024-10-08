@@ -2,15 +2,26 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <string>
+#include <cstdlib>
 
+#include <glad/glad.h> // GLAD
+#include <GLFW/glfw3.h> // GLFW
+#include <glm/glm.hpp> // GLM
+#include <imgui.h> // ImGui
+#include <spdlog/spdlog.h> // Spdlog
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h> // stb_image
+
+// Lua
 extern "C" {
 #include "lua.h"
 #include "lauxlib.h"
 #include "lualib.h"
 }
 
-std::string pad(std::string s, size_t size = 16)
-{
+std::string pad(std::string s, size_t size = 16) {
 	while (s.length() < size)
 		s.append(" ");
 
@@ -44,8 +55,62 @@ int main(int argc, char *argv[]) {
 		return jit ? "LuaJIT" : "Lua";
 	};
 
+	auto glm = [](std::stringstream &compOut) {
+		auto compiled = GLM_VERSION;
+		compOut << compiled;
+		return "GLM";
+	};
+
+	auto spdlog = [](std::stringstream &compOut) {
+		auto compiled = fmt::format("{}.{}.{}", SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
+		compOut << compiled;
+		return "Spdlog";
+	};
+
+	auto stb = [](std::stringstream &compOut) {
+		auto compiled = STBI_VERSION;
+		compOut << compiled;
+		return "stb_image";
+	};
+
+	GLFWwindow* window;
+	auto glfw = [&](std::stringstream &compOut) {
+		glfwSetErrorCallback([](int error, const char* description) {
+			std::cerr << "GLFW Error " << error << ": " << description;
+			spdlog::error("GLFW Error {}: {}", error, description);
+		});
+
+		if (!glfwInit()) {
+			std::cerr << "Failed to initialize GLFW!" << std::endl;
+			return "GLFW";
+		}
+
+		window = glfwCreateWindow(800, 600, "Hello World", NULL, NULL);
+		glfwMakeContextCurrent(window);
+
+		compOut << glfwGetVersionString();
+		return "GLFW";
+	};
+
+	auto glad = [](std::stringstream &compOut) {
+		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+			std::cerr << "Failed to initialize GLAD!" << std::endl;
+			return "GLAD";
+		}
+
+		glfwTerminate();
+
+		compOut << GLVersion.major << "." << GLVersion.minor;
+		return "GLAD (OpenGL)";
+	};
+
 	std::vector<std::function<std::string(std::stringstream&)>> funcs = {
-		lua
+		lua,
+		glm,
+		spdlog,
+		stb,
+		glfw,
+		glad
 	};
 
 	for (auto& f : funcs) {
