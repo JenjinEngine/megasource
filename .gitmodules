@@ -10,6 +10,7 @@
 [submodule "libs/imgui"]
 	path = libs/imgui
 	url = https://github.com/ocornut/imgui
+	branch = docking
 [submodule "libs/stb"]
 	path = libs/stb
 	url = https://github.com/nothings/stb.git
