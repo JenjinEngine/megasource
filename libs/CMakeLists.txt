@@ -53,3 +53,6 @@ add_subdirectory(lua)
 
 # --- Sol2 ---
 add_subdirectory(sol2)
+
+# --- yaml-cpp ---
+add_subdirectory(yaml-cpp)
