@@ -7,12 +7,16 @@ set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set (CMAKE_CXX_STANDARD 20)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if (MSVC)
+    message("[megasource-test] MSVC detected, enabling /utf-8")
+    add_compile_options("/utf-8")
+endif()
+
 # Project declaration
 project(megatest)
 
 add_subdirectory(libs)
 
-# binary
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME}
