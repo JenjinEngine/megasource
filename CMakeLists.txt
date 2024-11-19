@@ -30,7 +30,6 @@ target_include_directories(${PROJECT_NAME}
 				${CMAKE_SOURCE_DIR}/libs/imgui/backends/
 				${CMAKE_SOURCE_DIR}/libs/stb/
 				${CMAKE_SOURCE_DIR}/libs/lua/include/
-				${CMAKE_SOURCE_DIR}/libs/yaml-cpp/include/
 				${CMAKE_SOURCE_DIR}/libs/IconFontCppHeaders/
 				${CMAKE_SOURCE_DIR}/libs/
     PRIVATE
